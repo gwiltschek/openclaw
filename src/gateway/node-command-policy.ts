@@ -590,13 +590,18 @@ export function resolveRequiredNodeCommandAuthority(params: {
     ) {
       continue;
     }
-    if (declaredCommands.has(command) && !effectiveCommands.has(command)) {
-      return { command, state: "pending-approval" };
-    }
-    if (declaredCommands.has(command) || withheldCommands.has(command)) {
+    // Withheld wins over pending: a hot policy deny narrows a live session
+    // without touching its declaration, and no approval can restore it.
+    if (withheldCommands.has(command)) {
       return { command, state: "unauthorized" };
     }
-    return { command, state: "undeclared" };
+    if (!declaredCommands.has(command)) {
+      return { command, state: "undeclared" };
+    }
+    return {
+      command,
+      state: effectiveCommands.has(command) ? "unauthorized" : "pending-approval",
+    };
   }
   const command = params.requiredCommands[0];
   return command ? { command, state: "invocable" } : undefined;
