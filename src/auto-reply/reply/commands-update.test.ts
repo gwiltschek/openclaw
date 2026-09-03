@@ -164,6 +164,7 @@ describe("handleUpdateCommand", () => {
         timeoutMs: 1_200_000,
         resolveGatewayContext: expect.any(Function),
         forceSyntheticClient: true,
+        operatorRoleActor: { kind: "system" },
         syntheticScopes: ["operator.admin"],
       },
     );
