@@ -72,18 +72,20 @@ export function renderDeviceInventory(props: DevicesProps) {
   const stale = listStaleInventoryEntries(groups);
   const loading = props.loading || props.devicesLoading;
   const actions = html`
-    ${stale.length > 0
-      ? html`
-          <button
-            class="btn btn--sm danger"
-            title=${props.canManagePairing ? "" : t("devices.readOnly.pairingRequired")}
-            ?disabled=${!props.canManagePairing}
-            @click=${() => props.onInventoryCleanup(stale.map(toRemovalRequest))}
-          >
-            ${icons.trash} ${t("devices.inventory.cleanupStale", { count: String(stale.length) })}
-          </button>
-        `
-      : nothing}
+    ${
+      stale.length > 0
+        ? html`
+            <button
+              class="btn btn--sm danger"
+              title=${props.canManagePairing ? "" : t("devices.readOnly.pairingRequired")}
+              ?disabled=${!props.canManagePairing}
+              @click=${() => props.onInventoryCleanup(stale.map(toRemovalRequest))}
+            >
+              ${icons.trash} ${t("devices.inventory.cleanupStale", { count: String(stale.length) })}
+            </button>
+          `
+        : nothing
+    }
     <button
       class="btn"
       title=${props.canPairDevice ? "" : t("devices.pairing.adminRequired")}
@@ -97,24 +99,30 @@ export function renderDeviceInventory(props: DevicesProps) {
   // this section's empty state depends only on its own rows.
   const empty = groups.length === 0 && !gatewayPresence;
   const deviceRows = html`
-    ${gatewayPresence
-      ? renderPresenceRow({ kind: "gateway", entry: gatewayPresence }, props)
-      : nothing}
-    ${loading && groups.length === 0
-      ? renderSettingsLoadingSkeleton()
-      : empty
-        ? renderSettingsEmpty(t("devices.inventory.empty"))
-        : groups.map((group) => renderInventoryGroup(group, props))}
+    ${
+      gatewayPresence
+        ? renderPresenceRow({ kind: "gateway", entry: gatewayPresence }, props)
+        : nothing
+    }
+    ${
+      loading && groups.length === 0
+        ? renderSettingsLoadingSkeleton()
+        : empty
+          ? renderSettingsEmpty(t("devices.inventory.empty"))
+          : groups.map((group) => renderInventoryGroup(group, props))
+    }
   `;
   return html`
     ${props.devicesError ? html`<div class="callout danger">${props.devicesError}</div>` : nothing}
     ${props.lastError ? html`<div class="callout danger">${props.lastError}</div>` : nothing}
-    ${pending.length > 0
-      ? renderSettingsSection(
-          { title: t("devices.inventory.pendingApproval"), count: pending.length },
-          renderPendingDeviceRows(pending, paired, props),
-        )
-      : nothing}
+    ${
+      pending.length > 0
+        ? renderSettingsSection(
+            { title: t("devices.inventory.pendingApproval"), count: pending.length },
+            renderPendingDeviceRows(pending, paired, props),
+          )
+        : nothing
+    }
     ${renderSettingsSection(
       {
         title: t("devices.inventory.title"),
@@ -123,12 +131,14 @@ export function renderDeviceInventory(props: DevicesProps) {
       },
       deviceRows,
     )}
-    ${unpairedPresence.length > 0
-      ? renderSettingsSection(
-          { title: t("devices.inventory.connectedWithoutPairing") },
-          unpairedPresence.map((entry) => renderPresenceRow({ kind: "unpaired", entry }, props)),
-        )
-      : nothing}
+    ${
+      unpairedPresence.length > 0
+        ? renderSettingsSection(
+            { title: t("devices.inventory.connectedWithoutPairing") },
+            unpairedPresence.map((entry) => renderPresenceRow({ kind: "unpaired", entry }, props)),
+          )
+        : nothing
+    }
   `;
 }
 
@@ -298,22 +308,30 @@ function renderEntryDetails(entry: DeviceInventoryEntry, props: DevicesProps) {
     <details class="device-entry__details">
       <summary>${t("devices.inventory.details")}</summary>
       <div class="muted">${t("devices.inventory.deviceId", { id: entry.id })}</div>
-      ${entry.remoteIp
-        ? html`<div class="muted">${t("devices.inventory.remoteIp", { ip: entry.remoteIp })}</div>`
-        : nothing}
-      ${scopes.length > 0
-        ? html`<div class="muted">
-            ${t("devices.inventory.scopes", { scopes: formatList(scopes) })}
-          </div>`
-        : nothing}
-      ${tokens.length > 0
-        ? html`
-            <div class="muted">${t("devices.inventory.tokens")}</div>
-            ${tokens.map((token) =>
-              renderTokenRow({ id: entry.id, name: entry.name }, token, props),
-            )}
-          `
-        : nothing}
+      ${
+        entry.remoteIp
+          ? html`<div class="muted">
+              ${t("devices.inventory.remoteIp", { ip: entry.remoteIp })}
+            </div>`
+          : nothing
+      }
+      ${
+        scopes.length > 0
+          ? html`<div class="muted">
+              ${t("devices.inventory.scopes", { scopes: formatList(scopes) })}
+            </div>`
+          : nothing
+      }
+      ${
+        tokens.length > 0
+          ? html`
+              <div class="muted">${t("devices.inventory.tokens")}</div>
+              ${tokens.map((token) =>
+                renderTokenRow({ id: entry.id, name: entry.name }, token, props),
+              )}
+            `
+          : nothing
+      }
       ${renderCommandLine(commands)}
     </details>
   `;
@@ -350,24 +368,26 @@ function renderInventoryEntry(entry: DeviceInventoryEntry, props: DevicesProps) 
       <div class="settings-row__control">
         ${capacity?.meter ?? nothing} ${entryWarnStatuses(entry, props.gatewayVersion)}
         ${renderDesktopControl(props, `node:${entry.id}`, entry.node?.commands)}
-        ${pendingRequestId
-          ? html`
-              <button
-                class="btn btn--sm"
-                ?disabled=${!props.canManagePairing}
-                @click=${() => props.onNodeApprove(pendingRequestId)}
-              >
-                ${t("devices.inventory.approve")}
-              </button>
-              <button
-                class="btn btn--sm"
-                ?disabled=${!props.canManagePairing}
-                @click=${() => props.onNodeReject(pendingRequestId)}
-              >
-                ${t("devices.inventory.reject")}
-              </button>
-            `
-          : nothing}
+        ${
+          pendingRequestId
+            ? html`
+                <button
+                  class="btn btn--sm"
+                  ?disabled=${!props.canManagePairing}
+                  @click=${() => props.onNodeApprove(pendingRequestId)}
+                >
+                  ${t("devices.inventory.approve")}
+                </button>
+                <button
+                  class="btn btn--sm"
+                  ?disabled=${!props.canManagePairing}
+                  @click=${() => props.onNodeReject(pendingRequestId)}
+                >
+                  ${t("devices.inventory.reject")}
+                </button>
+              `
+            : nothing
+        }
         <button
           class="btn btn--sm danger device-entry__remove"
           aria-label=${t("devices.inventory.removeName", { name: entry.name })}
@@ -437,14 +457,18 @@ function renderPresenceRow(
         <div class="device-entry__heading">
           <span class="settings-row__title">${title}</span>
           <span class="device-entry__status">
-            ${gateway
-              ? renderSettingsStatus({ kind: "accent", label: t("devices.inventory.gateway") })
-              : renderSettingsStatus({ kind: "muted", label: t("devices.inventory.unpaired") })}
+            ${
+              gateway
+                ? renderSettingsStatus({ kind: "accent", label: t("devices.inventory.gateway") })
+                : renderSettingsStatus({ kind: "muted", label: t("devices.inventory.unpaired") })
+            }
           </span>
         </div>
-        ${parts.length > 0
-          ? html`<span class="settings-row__desc">${parts.join(" · ")}</span>`
-          : nothing}
+        ${
+          parts.length > 0
+            ? html`<span class="settings-row__desc">${parts.join(" · ")}</span>`
+            : nothing
+        }
         ${gateway ? renderHostStats(props.gatewaySystemInfo) : nothing}
       </div>
       <div class="settings-row__control">
@@ -503,17 +527,19 @@ function renderTokenRow(
         >
           ${t("devices.inventory.rotate")}
         </button>
-        ${tokenSummary.revokedAtMs
-          ? nothing
-          : html`
-              <button
-                class="btn btn--sm danger"
-                ?disabled=${!props.canManagePairing}
-                @click=${() => props.onDeviceRevoke(device.id, tokenSummary.role)}
-              >
-                ${t("devices.inventory.revoke")}
-              </button>
-            `}
+        ${
+          tokenSummary.revokedAtMs
+            ? nothing
+            : html`
+                <button
+                  class="btn btn--sm danger"
+                  ?disabled=${!props.canManagePairing}
+                  @click=${() => props.onDeviceRevoke(device.id, tokenSummary.role)}
+                >
+                  ${t("devices.inventory.revoke")}
+                </button>
+              `
+        }
       </span>
     </div>
   `;

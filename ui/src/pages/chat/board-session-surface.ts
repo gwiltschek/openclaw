@@ -132,41 +132,43 @@ export function renderBoardViewSwitch(props: {
   return html`
     <div class="chat-pane__face-switch ${showDockCaret ? "chat-pane__face-switch--split" : ""}">
       ${segmented}
-      ${showDockCaret && visibleDock
-        ? html`
-            <wa-dropdown
-              class="chat-pane__dock-caret"
-              placement="bottom-end"
-              @wa-select=${(event: CustomEvent<{ item: { value?: string } }>) => {
-                const value = event.detail.item.value;
-                if (value === "left" || value === "right" || value === "bottom") {
-                  props.onDockSideChange(value);
-                }
-              }}
-            >
-              <button
-                slot="trigger"
-                type="button"
-                class="btn btn--ghost btn--icon chat-icon-btn chat-pane__dock-caret-trigger"
-                title=${dockLabel(visibleDock)}
-                aria-label=${t("chat.board.dockMenu", { dock: dockLabel(visibleDock) })}
+      ${
+        showDockCaret && visibleDock
+          ? html`
+              <wa-dropdown
+                class="chat-pane__dock-caret"
+                placement="bottom-end"
+                @wa-select=${(event: CustomEvent<{ item: { value?: string } }>) => {
+                  const value = event.detail.item.value;
+                  if (value === "left" || value === "right" || value === "bottom") {
+                    props.onDockSideChange(value);
+                  }
+                }}
               >
-                ${icons.chevronDown}
-              </button>
-              ${(["left", "right", "bottom"] as const).map(
-                (candidate) => html`
-                  <wa-dropdown-item
-                    value=${candidate}
-                    type="checkbox"
-                    ?checked=${candidate === visibleDock}
-                  >
-                    ${dockLabel(candidate)}
-                  </wa-dropdown-item>
-                `,
-              )}
-            </wa-dropdown>
-          `
-        : nothing}
+                <button
+                  slot="trigger"
+                  type="button"
+                  class="btn btn--ghost btn--icon chat-icon-btn chat-pane__dock-caret-trigger"
+                  title=${dockLabel(visibleDock)}
+                  aria-label=${t("chat.board.dockMenu", { dock: dockLabel(visibleDock) })}
+                >
+                  ${icons.chevronDown}
+                </button>
+                ${(["left", "right", "bottom"] as const).map(
+                  (candidate) => html`
+                    <wa-dropdown-item
+                      value=${candidate}
+                      type="checkbox"
+                      ?checked=${candidate === visibleDock}
+                    >
+                      ${dockLabel(candidate)}
+                    </wa-dropdown-item>
+                  `,
+                )}
+              </wa-dropdown>
+            `
+          : nothing
+      }
       ${mode === "chat" ? nothing : props.fullscreenControl}
     </div>
   `;
@@ -175,16 +177,18 @@ export function renderBoardViewSwitch(props: {
 function renderBoardView(props: BoardSessionSurfaceProps) {
   return html`
     <div class="board-session-surface__board">
-      ${props.workboardCardChip
-        ? html`
-            <openclaw-workboard-card-chip
-              .active=${props.workboardCardChip.active}
-              .basePath=${props.workboardCardChip.basePath}
-              .client=${props.workboardCardChip.client}
-              .sessionKey=${props.workboardCardChip.sessionKey}
-            ></openclaw-workboard-card-chip>
-          `
-        : nothing}
+      ${
+        props.workboardCardChip
+          ? html`
+              <openclaw-workboard-card-chip
+                .active=${props.workboardCardChip.active}
+                .basePath=${props.workboardCardChip.basePath}
+                .client=${props.workboardCardChip.client}
+                .sessionKey=${props.workboardCardChip.sessionKey}
+              ></openclaw-workboard-card-chip>
+            `
+          : nothing
+      }
       <openclaw-board-view
         .active=${props.active}
         .snapshot=${props.snapshot}
@@ -212,9 +216,11 @@ export function renderBoardSessionSurface(props: BoardSessionSurfaceProps) {
       ?inert=${!props.active}
     >
       ${renderBoardView(props)}
-      ${props.active && props.dock === "bottom"
-        ? html`${props.divider}${renderChatDock(props)}`
-        : nothing}
+      ${
+        props.active && props.dock === "bottom"
+          ? html`${props.divider}${renderChatDock(props)}`
+          : nothing
+      }
     </div>
   `;
 }

@@ -202,11 +202,13 @@ class McpServersCard extends OpenClawLightDomElement {
             ?disabled=${disabled}
             @click=${() => void this.toggleServer(server.name, !server.enabled)}
           >
-            ${this.busy
-              ? t("mcpServers.working")
-              : server.enabled
-                ? t("mcpServers.disable")
-                : t("mcpServers.enable")}
+            ${
+              this.busy
+                ? t("mcpServers.working")
+                : server.enabled
+                  ? t("mcpServers.disable")
+                  : t("mcpServers.enable")
+            }
           </button>
           <button
             type="button"
@@ -260,25 +262,29 @@ class McpServersCard extends OpenClawLightDomElement {
             `,
           },
           html`
-            ${this.formOpen
-              ? renderMcpServerForm({
-                  busy: this.busy,
-                  disabled: !this.canMutate(),
-                  blockedReason,
-                  onSubmit: (form) => void this.addServer(form),
-                  onCancel: () => {
-                    this.formOpen = false;
-                  },
-                })
-              : nothing}
-            ${this.message
-              ? html`<div
-                  class="mcp-server-message mcp-server-message--${this.message.kind}"
-                  role=${this.message.kind === "error" ? "alert" : "status"}
-                >
-                  ${this.message.text}
-                </div>`
-              : nothing}
+            ${
+              this.formOpen
+                ? renderMcpServerForm({
+                    busy: this.busy,
+                    disabled: !this.canMutate(),
+                    blockedReason,
+                    onSubmit: (form) => void this.addServer(form),
+                    onCancel: () => {
+                      this.formOpen = false;
+                    },
+                  })
+                : nothing
+            }
+            ${
+              this.message
+                ? html`<div
+                    class="mcp-server-message mcp-server-message--${this.message.kind}"
+                    role=${this.message.kind === "error" ? "alert" : "status"}
+                  >
+                    ${this.message.text}
+                  </div>`
+                : nothing
+            }
             ${body}
           `,
         )}

@@ -97,15 +97,17 @@ function renderPendingDevice(req: PendingDevice, props: DevicesProps, paired?: P
             access: formatAccessSummary(approval.requested),
           })}
         </span>
-        ${approval.approved
-          ? html`
-              <span class="settings-row__desc">
-                ${t("devices.inventory.approvedAccess", {
-                  access: formatAccessSummary(approval.approved),
-                })}
-              </span>
-            `
-          : nothing}
+        ${
+          approval.approved
+            ? html`
+                <span class="settings-row__desc">
+                  ${t("devices.inventory.approvedAccess", {
+                    access: formatAccessSummary(approval.approved),
+                  })}
+                </span>
+              `
+            : nothing
+        }
       </div>
       <div class="settings-row__control">
         <button
