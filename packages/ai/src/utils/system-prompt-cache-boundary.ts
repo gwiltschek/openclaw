@@ -30,8 +30,8 @@ export function splitSystemPromptRelocatableBoundary(
   if (
     start === -1 ||
     end < start ||
-    text.indexOf(opening, start + opening.length) !== -1 ||
-    text.indexOf(closing, end + closing.length) !== -1
+    text.includes(opening, start + opening.length) ||
+    text.includes(closing, end + closing.length)
   ) {
     return undefined;
   }
